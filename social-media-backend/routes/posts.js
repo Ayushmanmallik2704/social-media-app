@@ -11,6 +11,9 @@ const { protect } = require('../middleware/auth'); // Import the protect middlew
 router.post('/', protect, async (req, res) => {
     const { text, imageUrl } = req.body; // Extract text and optional imageUrl from request body
 
+    // Debug log: show received imageUrl
+    console.log('Creating post. Received imageUrl:', imageUrl);
+
     // Basic validation
     if (!text && !imageUrl) {
         return res.status(400).json({ message: 'A post must have either text or an image.' });
@@ -26,6 +29,9 @@ router.post('/', protect, async (req, res) => {
 
         // Save the post to the database
         const post = await newPost.save();
+
+        // Debug log: show saved post's imageUrl
+        console.log('Saved post. imageUrl in DB:', post.imageUrl);
 
         // Populate the user field to return user details with the post
         await post.populate('user', 'username profilePicture');

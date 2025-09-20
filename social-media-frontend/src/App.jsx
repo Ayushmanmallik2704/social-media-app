@@ -1,26 +1,29 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { useAuth } from "./context/Authcontext";
 
 // Auth
 import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
 
-// App pages (adjust these if your filenames differ)
-import Postfeed from "./components/Feed/Postfeed";          // Home feed
+// App pages
+import Postfeed from "./components/Feed/Postfeed";
 import Createpost from "./components/Feed/Createpost";
 import ProfilePage from "./components/Profile/ProfilePage";
-import ChatWindow from "./components/Messaging/ChatWindow"; // you don't have 'Conversation.jsx', so use ChatWindow
+import ChatWindow from "./components/Messaging/ChatWindow";
 
 // Protect routes that require login
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("token");
-  return token ? children : <Navigate to="/" replace />;
+  const { token, user, loading } = useAuth();
+  if (loading) return null; // or a loading spinner
+  return token && user ? children : <Navigate to="/" replace />;
 };
 
 // If already logged in, keep users out of Login/Register
 const RedirectIfAuthed = ({ children }) => {
-  const token = localStorage.getItem("token");
-  return token ? <Navigate to="/home" replace /> : children;
+  const { token, user, loading } = useAuth();
+  if (loading) return null; // or a loading spinner
+  return token && user ? <Navigate to="/home" replace /> : children;
 };
 
 function App() {
